@@ -1,9 +1,10 @@
-package fi.academy.json.esimerkki;
+package trainproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
