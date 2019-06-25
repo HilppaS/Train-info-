@@ -1,4 +1,4 @@
-package fi.academy.json.esimerkki;
+package trainproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
