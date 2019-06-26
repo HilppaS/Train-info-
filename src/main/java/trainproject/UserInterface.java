@@ -17,7 +17,9 @@ public class UserInterface {
             if ("1".equals(input)) {
                 returnTrainByGivenStations();
             } else if ("2".equals(input)) {
-                printTrainInfo();
+                System.out.println("Enter train number");
+                String trainnumber = scanner.nextLine();
+                JSON_pohja_junat.printTrainInfo(trainnumber);
             } else if ("3".equals(input)) {
                 findMovingTrainInfo();
             } else if ("0".equals(input)) {
@@ -42,9 +44,12 @@ public class UserInterface {
         System.out.println("Now returning back to main menu");
 
     }
+
+ 
     private void printTrainInfo() {
         System.out.println("You are now searching information about a single train.");
         System.out.println("Please enter train number");
+
         String trainNumber = scanner.nextLine();
 
         System.out.println("You entered train number " + trainNumber);
@@ -52,7 +57,8 @@ public class UserInterface {
         System.out.println("Tieto asemista, joilla juna pysähtyy...");
         System.out.println("Tieto siitä, kuinka pitkä pysähdys on asemalla X...");
         System.out.println("Now returning back to main menu");
-    }
+
+    } */
 
     private void findMovingTrainInfo() {
         System.out.println("Choose an option:\n"
