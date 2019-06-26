@@ -34,6 +34,7 @@ public class JSON_pohja_junat {
             CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
             List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
             int i = 0;
+
             // for (Juna j : junat) {
             System.out.println("Junan numero on " + junat.get(i).getTrainNumber());
             System.out.println("Junan lähtöpäivä on " + junat.get(i).getDepartureDate());
@@ -41,6 +42,15 @@ public class JSON_pohja_junat {
             System.out.println("Eka juna lähtee ekalta asemalta: " + junat.get(0).getTimeTableRows().);
             //   i++;
             // }
+
+           // for (Juna j : junat) {
+                System.out.println("Junan numero on " + junat.get(i).getTrainNumber());
+                System.out.println("Junan lähtöpäivä on " + junat.get(i).getDepartureDate());
+                System.out.println("TimetableRow ekalle junalle: " + junat.get(i).getTimeTableRows());
+            System.out.println("Eka juna lähtee ekalta asemalta: " + junat.get(0).getTimeTableRows().);
+             //   i++;
+           // }
+
 
             // Seuraavaa varten on toteutettava TimeTableRow luokka:
             //System.out.println(junat.get(0).getTimeTableRows().get(0).getScheduledTime());
