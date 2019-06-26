@@ -25,24 +25,60 @@ public class JSON_pohja_junat {
 
 
     private static void lueJunanJSONData() {
+        // Määritetään API:n osoite, mistä JSON-datat haetaan
         String baseurl = "https://rata.digitraffic.fi/api/v1";
         try {
-            URL url = new URL(URI.create(String.format("%s/live-trains/station/HKI/LH", baseurl)).toASCIIString());
+            // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä Lahteen)
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/hki/LH", baseurl)).toASCIIString());
             ObjectMapper mapper = new ObjectMapper();
             CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
             List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
-            System.out.println(junat.get(0).getTrainNumber());
+            int i = 0;
+           // for (Juna j : junat) {
+                System.out.println("Junan numero on " + junat.get(i).getTrainNumber());
+                System.out.println("Junan lähtöpäivä on " + junat.get(i).getDepartureDate());
+                System.out.println("TimetableRow ekalle junalle: " + junat.get(i).getTimeTableRows());
+            System.out.println("Eka juna lähtee ekalta asemalta: " + junat.get(0).getTimeTableRows().);
+             //   i++;
+           // }
 
+            // Seuraavaa varten on toteutettava TimeTableRow luokka:
+            //System.out.println(junat.get(0).getTimeTableRows().get(0).getScheduledTime());
+            //  System.out.println("\n\n");
+            //  System.out.println(junat.get(0));
 
-    // Seuraavaa varten on toteutettava TimeTableRow luokka:
-    //System.out.println(junat.get(0).getTimeTableRows().get(0).getScheduledTime());
-            System.out.println("\n\n");
-            System.out.println(junat.get(0));
-
-} catch (Exception ex) {
-        System.out.println(ex);
+        } catch (Exception ex) {
+            System.out.println(ex);
         }
+    }
+
+    private static void lueJunanJSONData() {
+        // Määritetään API:n osoite, mistä JSON-datat haetaan
+        String baseurl = "https://rata.digitraffic.fi/api/v1";
+        try {
+            // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä Lahteen)
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/hki/LH", baseurl)).toASCIIString());
+            ObjectMapper mapper = new ObjectMapper();
+            CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
+            List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
+            int i = 0;
+            // for (Juna j : junat) {
+            System.out.println("Junan numero on " + junat.get(i).getTrainNumber());
+            System.out.println("Junan lähtöpäivä on " + junat.get(i).getDepartureDate());
+            System.out.println("TimetableRow ekalle junalle: " + junat.get(i).getTimeTableRows());
+            System.out.println("Eka juna lähtee ekalta asemalta: " + junat.get(0).getTimeTableRows().);
+            //   i++;
+            // }
+
+            // Seuraavaa varten on toteutettava TimeTableRow luokka:
+            //System.out.println(junat.get(0).getTimeTableRows().get(0).getScheduledTime());
+            //  System.out.println("\n\n");
+            //  System.out.println(junat.get(0));
+
+        } catch (Exception ex) {
+            System.out.println(ex);
         }
+    }
 }
 
 class Juna {
@@ -173,5 +209,91 @@ class Juna {
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class TimeTableRow {
+    String stationShortCode;
+    int stationUICCode;
+    String countryCode;
+    String type;
+    boolean trainStopping;
+    boolean commercialStop;
+   // int commercialTrack;
+    boolean cancelled;
+    Date scheduledTime;
+
+    @Override
+    public String toString() {
+        return "Aikataulu{" + "scheduledTime=" + scheduledTime + '}';
+    }
+
+    public String getStationShortCode() {
+        return stationShortCode;
+    }
+
+    public void setStationShortCode(String stationShortCode) {
+        this.stationShortCode = stationShortCode;
+    }
+
+    public int getStationUICCode() {
+        return stationUICCode;
+    }
+
+    public void setStationUICCode(int stationUICCode) {
+        this.stationUICCode = stationUICCode;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public boolean isTrainStopping() {
+        return trainStopping;
+    }
+
+    public void setTrainStopping(boolean trainStopping) {
+        this.trainStopping = trainStopping;
+    }
+
+    public boolean isCommercialStop() {
+        return commercialStop;
+    }
+
+    public void setCommercialStop(boolean commercialStop) {
+        this.commercialStop = commercialStop;
+    }
+
+   /* public int getCommercialTrack() {
+        return commercialTrack;
+    }
+
+    public void setCommercialTrack(int commercialTrack) {
+        this.commercialTrack = commercialTrack;
+    }*/
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    public Date getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public void setScheduledTime(Date scheduledTime) {
+        this.scheduledTime = scheduledTime;
+    }
 }
 
