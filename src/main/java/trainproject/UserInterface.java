@@ -30,6 +30,7 @@ public class UserInterface {
     }
     Scanner scanner = new Scanner(System.in);
     private void returnTrainByGivenStations() {
+        JSON_pohja_junat.tulostaHyvaksyttavatAsemat();
         System.out.println("Enter departure station:");
         String departureStation = scanner.nextLine();
         System.out.println("Enter arrival station");

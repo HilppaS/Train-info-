@@ -49,7 +49,26 @@ public class JSON_pohja_junat {
     }
 
     public static void tulostaSeuraavaJunaLähtöMääräasemienPerusteella() {
-        // Määritetään API:n osoite, mistä JSON-datat haetaan
+        String baseurl = "https://rata.digitraffic.fi/api/v1";
+        try {
+            // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä Lahteen)
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/hki/TPE", baseurl)).toASCIIString());
+            ObjectMapper mapper = new ObjectMapper();
+            CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
+            List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
+            int i = 0;
+
+            // for (Juna j : junat) {
+            System.out.println("First train from XX to YY will depart at : " + junat.get(0).getTimeTableRows().get(0).getScheduledTime());
+            //   i++;
+            // }
+
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+    }
+
+    public static void tulostaHyvaksyttavatAsemat() {
         String baseurl = "https://rata.digitraffic.fi/api/v1";
         try {
             // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä Lahteen)
@@ -60,8 +79,7 @@ public class JSON_pohja_junat {
             int i = 0;
 
             // for (Juna j : junat) {
-            System.out.println("TimetableRow ekalle junalle: " + junat.get(i).getTimeTableRows());
-            System.out.println("Eka juna lähtee ekalta asemalta: " + junat.get(0).getTimeTableRows().get(0).getScheduledTime());
+            System.out.println("Station codes are: " + junat.get(0).getTimeTableRows().get(0).getStationShortCode());
             //   i++;
             // }
 
@@ -69,6 +87,8 @@ public class JSON_pohja_junat {
             System.out.println(ex);
         }
     }
+
+
 }
 
 class Juna {
