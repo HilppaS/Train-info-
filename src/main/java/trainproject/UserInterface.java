@@ -1,6 +1,8 @@
 package trainproject;
+
 import java.util.ArrayList;
 import java.util.Scanner;
+
 public class UserInterface {
     private static final String menutext = "\nChoose an option:\n"
             + "1: Find the next train based on from and to stations\n"
@@ -32,14 +34,16 @@ public class UserInterface {
         String departureStation = scanner.nextLine();
         System.out.println("Enter arrival station");
         String arrivalStation = scanner.nextLine();
+        JSON_pohja_junat.tulostaSeuraavaJunaLähtöMääräasemienPerusteella();
         System.out.println("Thank you for trying out our search function");
         System.out.println("Now returning back to main menu");
         //Tähän lisättävä seuraavan junan HAKU lähtö- ja määräasemien perusteella
     }
     private void printTrainInfo() {
-        //      System.out.println("Search information about a single train");
-        System.out.println("Enter train number");
+        System.out.println("You are now searching information about a single train.");
+        System.out.println("Please enter train number");
         String trainNumber = scanner.nextLine();
+
         System.out.println("You entered train number " + trainNumber);
         System.out.println("Tieto junan kulusta on...");
         System.out.println("Tieto asemista, joilla juna pysähtyy...");
