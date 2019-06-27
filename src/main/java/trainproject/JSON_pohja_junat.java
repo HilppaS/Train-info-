@@ -23,9 +23,9 @@ Asentuu Jacksonin databind, sekä core ja annotations
 
 public class JSON_pohja_junat {
 
-    // public static void main(String[] args) {
-    //   tulostaSeuraavaJunaLähtöJaMääräasemienPerusteella();
-    //}
+     public static void main(String[] args) {
+         kahdenAsemanValillaLiikkeessaOlevatJunat();
+    }
 
     public static void lueJunanJSONData() {
 
@@ -53,7 +53,7 @@ public class JSON_pohja_junat {
     }
 
     ///SANNAN KOODIA...
-
+    // https://rata.digitraffic.fi/api/v1/trains/2019-06-26/67
     public static void printTrainInfo(String trainnumber) {
         // Määritetään API:n osoite, mistä JSON-datat haetaan
         String baseurl = "https://rata.digitraffic.fi/api/v1";
@@ -156,27 +156,23 @@ public class JSON_pohja_junat {
         String baseurl = "https://rata.digitraffic.fi/api/v1";
         try {
             // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä Lahteen)
-            URL url = new URL(URI.create(String.format("%s/live-trains/station/HKI/OL", baseurl)).toASCIIString());
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/HKI/TPE", baseurl)).toASCIIString());
             ObjectMapper mapper = new ObjectMapper();
             CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
             List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
-            int i = 0;
-            Date lahto = junat.get(0).getTimeTableRows().get(2).getScheduledTime();
-            Date saapuminen = junat.get(0).getTimeTableRows().get(4).getScheduledTime();
-            long ero = saapuminen.getTime() - lahto.getTime();
-            System.out.println("Erotus " + ero);
-            for (Juna j : junat) {
-                System.out.println(j.isRunningCurrently());
-                System.out.println("Juna on lähtenyt asemaltaan: " + junat.get(i).getTimeTableRows().get(0).getScheduledTime());
-              /*  if(j.isRunningCurrently()) {
-                    System.out.println("Junan numero on " + junat.get(i).getTrainNumber());
-                    System.out.println("Junan lähtöpäivä on " + junat.get(i).getDepartureDate());
-                    System.out.println("Juna on lähtenyt asemaltaan: " + junat.get(0).getTimeTableRows().get(0).getScheduledTime());
-                    i++;
-                }*/
-                i++;
-            }
 
+            for (Juna j : junat) {
+                Date departure =j.getTimeTableRows().get(0).getScheduledTime();
+                Date arrival = j.getTimeTableRows().get(j.getTimeTableRows().size()-1).getScheduledTime();
+                System.out.println("lähtö" + departure);
+                System.out.println("arrival " + arrival);
+                System.out.println(new Date());
+                if(j.getTimeTableRows().get(0).getScheduledTime().after(new Date()) && j.getTimeTableRows().get(j.getTimeTableRows().size()-1).getScheduledTime().before(new Date())) {
+                    System.out.println("Junan numero on " + j.getTrainNumber());
+                    System.out.println("Junan lähtöpäivä on " + j.getDepartureDate());
+                    System.out.println("Juna on lähtenyt asemaltaan: " + j.getTimeTableRows().get(0).getScheduledTime());
+                }
+            }
         } catch (Exception ex) {
             System.out.println(ex);
         }
