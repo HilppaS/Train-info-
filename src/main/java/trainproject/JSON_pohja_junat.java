@@ -32,7 +32,7 @@ public class JSON_pohja_junat {
 
     public static void main(String[] args) {
         //kahdenAsemanValillaLiikkeessaOlevatJunat();
-      //  ListInfoOfCertainTrain("8");
+        //  ListInfoOfCertainTrain("8");
     }
 
     public static void lueJunanJSONDataAsemaltaAasemalleB() {
@@ -81,16 +81,6 @@ public class JSON_pohja_junat {
             getStopStationsOfCertainTrainNr(kasiteltavajuna, junanAika);
 
             System.out.println("Arrival station: " + kasiteltavajuna.get(kasiteltavajuna.size()-1).getStationShortCode()+ ", estimated arrival time: " + junanAika );
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Something went wrong");
-        } catch (InputMismatchException e) {
-            System.out.println("Something went wrong");
-        } catch (ConnectException e){
-            System.out.println("Something went wrong");
-        } catch (IllegalArgumentException e){
-            System.out.println("Something went wrong");
-        } catch ( NullPointerException e ){
-            System.out.println("Something went wrong");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,18 +99,17 @@ public class JSON_pohja_junat {
         }
     }
     //SANNA:
-   // hakee syötteen perusteella junan tiedot URLin takaa ja Mappaa ne
+    // hakee syötteen perusteella junan tiedot URLin takaa ja Mappaa ne
     private static List<Juna> getInfoByTrainNr(String trainnumber, String baseurl) throws IOException {
         { URL url = new URL(URI.create(String.format("%s/trains/latest/"+ trainnumber, baseurl)).toASCIIString());
-           return MapperMethod(url);
-       }
+            return MapperMethod(url);
+        }
     }
 
     private static List<Juna> MapperMethod(URL url) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
         return mapper.readValue(url, tarkempiListanTyyppi);
-
     }
 
 

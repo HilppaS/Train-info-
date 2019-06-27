@@ -1,7 +1,6 @@
 package trainproject;
-
 import org.junit.Test;
-
+import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class JSON_pohja_junatTest {
@@ -10,17 +9,12 @@ public class JSON_pohja_junatTest {
     public void getInfoByTrainNrTest(){
 
     }
+
     @Test
     public void getStopStationsOfCertainTrainNrTest(){
 
     }
-    @Test
-    public void ListInfoOfCertainTrainTest(){
-        String baseurl = "https://rata.digitraffic.fi/api/v1";
-        String comparable = "https://rata.digitraffic.fi/api/v1";
-        assertEquals(baseurl, comparable);
 
-    }
 
     @Test
     public void shouldAnswerWithTrue() {

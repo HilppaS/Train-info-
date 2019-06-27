@@ -16,6 +16,7 @@ public class TimeTableRow {
     boolean cancelled;
     Date scheduledTime;
 
+
     @Override
     public String toString() {
         return "Aikataulu{" + "scheduledTime=" + scheduledTime + '}';
