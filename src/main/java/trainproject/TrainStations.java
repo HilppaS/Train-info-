@@ -52,7 +52,7 @@ public class TrainStations {
 
             Map<String, Object> asemaTaulukko = new HashMap<String, Object>();
 
-            for(TrainStations asema : asemat) {
+            for (TrainStations asema : asemat) {
                 asemaTaulukko.put(asema.getStationName(), asema.getStationShortCode());
             }
 
@@ -63,7 +63,5 @@ public class TrainStations {
         } catch (Exception ex) {
             System.out.println(ex);
         }
-
-        // }
     }
 }

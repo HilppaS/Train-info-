@@ -9,6 +9,7 @@ public class UserInterface {
             + "2: Get info of a specific train\n"
             + "3: Search trains that are on the move\n"
             + "0: Quit";
+
     public void run() {
         Scanner scanner = new Scanner(System.in);
         for (; ; ) {
@@ -30,9 +31,11 @@ public class UserInterface {
             }
         }
     }
+
     Scanner scanner = new Scanner(System.in);
+
     private void returnTrainByGivenStations() {
-     //   JSON_pohja_junat.tulostaHyvaksyttavatAsemat();
+        //   JSON_pohja_junat.tulostaHyvaksyttavatAsemat();
 
         System.out.println("Enter departure station:");
         String departureStation = scanner.nextLine();
@@ -67,21 +70,23 @@ public class UserInterface {
                 + "0: Return to main menu");
 
         String choice = scanner.nextLine();
-        if ("1".equals(choice)){
+        if ("1".equals(choice)) {
             System.out.println("Find all the trains between station A and station B");
             System.out.print("Insert station A: ");
             String stationA = scanner.nextLine();
+            stationA = CommonTools.fixInputOutlook(stationA);
             System.out.print("Insert station B: ");
             String stationB = scanner.nextLine();
-            System.out.println("Tässä tulokset perustuen kahteen asemaan");
+            stationB = CommonTools.fixInputOutlook(stationB);
+            JSON_pohja_junat.activeTrainsBetweenTwoStations(stationA, stationB);
 
-        } else if ("2".equals(choice)){
+        } else if ("2".equals(choice)) {
             System.out.println("Find nearest trains based on your location");
             System.out.println("Enter your location:");
             String locationData = scanner.nextLine();
             System.out.println("Nearest trains and stations next to " + locationData + " are: ...");
 
-        } else if ("3".equals(choice)){
+        } else if ("3".equals(choice)) {
             System.out.println("Find all the trains departing from your station: ");
             String departureStation = scanner.nextLine();
             JSON_pohja_junat.returnDepartedTrainsFromStation(departureStation);
@@ -92,6 +97,7 @@ public class UserInterface {
             System.err.println(String.format("Unknown choice, please type again: '%s'", choice));
         }
     }
+
     public static void main(String[] args) {
         new UserInterface().run();
     }
