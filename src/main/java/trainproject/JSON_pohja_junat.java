@@ -8,15 +8,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.ConnectException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -32,7 +32,7 @@ public class JSON_pohja_junat {
 
     public static void main(String[] args) {
         //kahdenAsemanValillaLiikkeessaOlevatJunat();
-        ListInfoOfCertainTrain("8");
+      //  ListInfoOfCertainTrain("8");
     }
 
     public static void lueJunanJSONDataAsemaltaAasemalleB() {
@@ -60,11 +60,11 @@ public class JSON_pohja_junat {
         }
     }
 
-    //SANNAN KOODIA:
-    //-> asemat joilla juna pysähtyy, sekä niille arvioidut saapumisajat
-    // -> pysähdysten kestot eri asemilla minuuteissa
-    // -> pääteasema, saapumisaika
-    //-> jos juna on jo kulussa, tieto todellisista ja arvioiduista ajoista asemilla
+    //SANNA:
+    // Metodi:
+    // -listaa lähtö- sekä saapumisasemat, sekä kellonajat
+    // Kutsuu metodia getInfoByTrainNr, joka hakee syötteen perusteella junan tiedot URLin takaa ja Mappaa ne
+    // Kutsuu metodia getStopStationsOfCertainTrainNr, joka hakee URLin takaa asemat, joilla syötetty juna pysähtyy, niille arvioidut saapumisajat sekä pysähdysten kestot eri asemilla minuuteissa
 
     public static void ListInfoOfCertainTrain(String trainnumber) {
         // Määritetään API:n osoite, mistä JSON-datat haetaan
@@ -76,17 +76,27 @@ public class JSON_pohja_junat {
             Date junanAika = kasiteltavajuna.get(0).getScheduledTime();
 
             System.out.println("Train nr: " + junat.get(i).getTrainNumber());
-            System.out.println("Departure station: " + kasiteltavajuna.get(0).getStationShortCode() + ", departure: " +junanAika );
+            System.out.println("Departure station: " + kasiteltavajuna.get(0).getStationShortCode() + ", departure: " + junanAika );
 
             getStopStationsOfCertainTrainNr(kasiteltavajuna, junanAika);
 
             System.out.println("Arrival station: " + kasiteltavajuna.get(kasiteltavajuna.size()-1).getStationShortCode()+ ", estimated arrival time: " + junanAika );
-
-        } catch (Exception e) {
-            System.out.println("Train number not valid");
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Something went wrong");
+        } catch (InputMismatchException e) {
+            System.out.println("Something went wrong");
+        } catch (ConnectException e){
+            System.out.println("Something went wrong");
+        } catch (IllegalArgumentException e){
+            System.out.println("Something went wrong");
+        } catch ( NullPointerException e ){
+            System.out.println("Something went wrong");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-
+    //SANNA:
+    //-> Metodi hakee asemat, joilla juna pysähtyy, niille arvioidut saapumisajat sekä pysähdysten kestot eri asemilla minuuteissa
     private static void getStopStationsOfCertainTrainNr(List<TimeTableRow> kasiteltavajuna, Date junanAika) {
         for ( int b=1; b<kasiteltavajuna.size()-1; b=b+2) {
             Date saapuminen =kasiteltavajuna.get(b+1).getScheduledTime();
@@ -98,7 +108,8 @@ public class JSON_pohja_junat {
             }
         }
     }
-
+    //SANNA:
+   // hakee syötteen perusteella junan tiedot URLin takaa ja Mappaa ne
     private static List<Juna> getInfoByTrainNr(String trainnumber, String baseurl) throws IOException {
         { URL url = new URL(URI.create(String.format("%s/trains/latest/"+ trainnumber, baseurl)).toASCIIString());
            return MapperMethod(url);
@@ -109,6 +120,7 @@ public class JSON_pohja_junat {
         ObjectMapper mapper = new ObjectMapper();
         CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
         return mapper.readValue(url, tarkempiListanTyyppi);
+
     }
 
 
