@@ -45,7 +45,6 @@ public class UserInterface {
 
     }
 
- 
     private void printTrainInfo() {
         System.out.println("You are now searching information about a single train.");
         System.out.println("Please enter train number");
@@ -58,7 +57,7 @@ public class UserInterface {
         System.out.println("Tieto siitä, kuinka pitkä pysähdys on asemalla X...");
         System.out.println("Now returning back to main menu");
 
-    } */
+    }
 
     private void findMovingTrainInfo() {
         System.out.println("Choose an option:\n"
