@@ -36,9 +36,11 @@ public class UserInterface {
 
         System.out.println("Enter departure station:");
         String departureStation = scanner.nextLine();
+        departureStation = CommonTools.fixInputOutlook(departureStation);
 
-        System.out.println("Enter arrival station");
+        System.out.println("Enter arrival station:");
         String arrivalStation = scanner.nextLine();
+        arrivalStation = CommonTools.fixInputOutlook(arrivalStation);
 
         JSON_pohja_junat.tulostaSeuraavaJunaLähtöJaMääräasemienPerusteella(departureStation, arrivalStation);
         System.out.println("Now returning back to main menu...");
@@ -78,9 +80,9 @@ public class UserInterface {
 
         //Tuomas
         } else if ("3".equals(choice)){
-            System.out.println("Find all the trains departed from your station");
+            System.out.println("Find all the trains departed from your station:");
             String departureStation = scanner.nextLine();
-            JSON_pohja_junat.returnLiveDepartedTrainsFromStation(departureStation);
+            JSON_pohja_junat.activeTrainsFromSingleStation(departureStation);
 
         } else if ("0".equals(choice)) {
             System.out.println("Now returning back to main menu...");
