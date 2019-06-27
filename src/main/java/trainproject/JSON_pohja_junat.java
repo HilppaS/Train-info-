@@ -59,7 +59,6 @@ public class JSON_pohja_junat {
             System.out.println("");
         }
     }
-
     //SANNA:
     // Metodi:
     // -listaa lähtö- sekä saapumisasemat, sekä kellonajat

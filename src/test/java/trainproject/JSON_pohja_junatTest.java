@@ -15,7 +15,6 @@ public class JSON_pohja_junatTest {
 
     }
 
-
     @Test
     public void shouldAnswerWithTrue() {
         assertTrue(true);
