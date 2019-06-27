@@ -20,7 +20,7 @@ public class UserInterface {
             } else if ("2".equals(input)) {
                 System.out.println("Enter train number");
                 String trainnumber = scanner.nextLine();
-                JSON_pohja_junat.printTrainInfo(trainnumber);
+                JSON_pohja_junat.ListInfoOfCertainTrain(trainnumber);
             } else if ("3".equals(input)) {
                 findMovingTrainInfo();
             } else if ("0".equals(input)) {
@@ -43,22 +43,7 @@ public class UserInterface {
         String arrivalStation = scanner.nextLine();
 
         JSON_pohja_junat.tulostaSeuraavaJunaLähtöJaMääräasemienPerusteella(departureStation, arrivalStation);
-        System.out.println("Now returning back to main menu");
-    }
-
- 
-    private void printTrainInfo() {
-        System.out.println("You are now searching information about a single train.");
-        System.out.println("Please enter train number");
-
-        String trainNumber = scanner.nextLine();
-
-        System.out.println("You entered train number " + trainNumber);
-        System.out.println("Tieto junan kulusta on...");
-        System.out.println("Tieto asemista, joilla juna pysähtyy...");
-        System.out.println("Tieto siitä, kuinka pitkä pysähdys on asemalla X...");
-        System.out.println("Now returning back to main menu");
-
+        System.out.println("Now returning back to main menu...");
     }
 
     private void findMovingTrainInfo() {
@@ -93,7 +78,7 @@ public class UserInterface {
             JSON_pohja_junat.returnLiveDepartedTrainsFromStation(departureStation);
 
         } else if ("0".equals(choice)) {
-            System.out.println("Returning to main menu...");
+            System.out.println("Now returning back to main menu...");
         } else {
             System.err.println(String.format("Unknown choice, please type again: '%s'", choice));
         }
