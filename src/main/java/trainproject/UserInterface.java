@@ -58,7 +58,7 @@ public class UserInterface {
         System.out.println("Tieto siitä, kuinka pitkä pysähdys on asemalla X...");
         System.out.println("Now returning back to main menu");
 
-    } */
+    }
 
     private void findMovingTrainInfo() {
         System.out.println("Choose an option:\n"

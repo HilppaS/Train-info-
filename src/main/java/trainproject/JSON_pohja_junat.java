@@ -121,12 +121,14 @@ public class JSON_pohja_junat {
             int i = 0;
 
             // for (Juna j : junat) {
-            if (junat.get(0).runningCurrently) {
-                System.out.println("The latest train departed from " + departureStation + " is: Train " + junat.get(0).getTrainNumber());
-            // Tähän lisättävä "junat.get(0).get.Timetablerows(0) stationShortCode" eli mille asemalle juna saapuu seuraavaksi + get.ScheduledTime
-            } else {
-                System.out.println("Train not running currently");
-            }
+            for ( int c=0; c<junat.get(0).getTimeTableRows().size(); c++) {
+             //   System.out.println("asema: " + junat.get(0).getTimeTableRows().get(c).getStationShortCode());
+
+                if (junat.get(0).runningCurrently) {
+                    // KORJATTAVA
+                    //System.out.println("The latest train departed from " + departureStation + " is: Train " + junat.get(0).getTimeTableRows().get(c).getTrainNumber());
+                    }
+                }
             } catch(Exception ex){
             System.out.println(ex);
         }
