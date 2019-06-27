@@ -19,7 +19,7 @@ public class UserInterface {
             } else if ("2".equals(input)) {
                 System.out.println("Enter train number");
                 String trainnumber = scanner.nextLine();
-                JSON_pohja_junat.printTrainInfo(trainnumber);
+                JSON_pohja_junat.ListInfoOfCertainTrain(trainnumber);
             } else if ("3".equals(input)) {
                 findMovingTrainInfo();
             } else if ("0".equals(input)) {
