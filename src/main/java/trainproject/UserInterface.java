@@ -18,9 +18,7 @@ public class UserInterface {
             if ("1".equals(input)) {
                 returnTrainByGivenStations();
             } else if ("2".equals(input)) {
-                System.out.println("Enter train number");
-                String trainnumber = scanner.nextLine();
-                JSON_pohja_junat.ListInfoOfCertainTrain(trainnumber);
+                listInfoOfCertainTrain();
             } else if ("3".equals(input)) {
                 findMovingTrainInfo();
             } else if ("0".equals(input)) {
@@ -44,6 +42,13 @@ public class UserInterface {
 
         JSON_pohja_junat.tulostaSeuraavaJunaLähtöJaMääräasemienPerusteella(departureStation, arrivalStation);
         System.out.println("Now returning back to main menu...");
+    }
+
+    //Sanna
+    private void listInfoOfCertainTrain() {
+        System.out.println("Enter train number");
+        String trainnumber = scanner.nextLine();
+        JSON_pohja_junat.ListInfoOfCertainTrain(trainnumber);
     }
 
     private void findMovingTrainInfo() {
