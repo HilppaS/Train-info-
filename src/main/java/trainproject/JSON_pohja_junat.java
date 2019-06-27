@@ -92,6 +92,7 @@ public class JSON_pohja_junat {
     }
 
 
+
     public static void tulostaSeuraavaJunaLähtöJaMääräasemienPerusteella(String departureStation, String arrivalStation) {
         String baseurl = "https://rata.digitraffic.fi/api/v1";
 
