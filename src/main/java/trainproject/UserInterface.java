@@ -22,63 +22,66 @@ public class UserInterface {
             if ("1".equals(input)) {
                 returnTrainByGivenStations();
             } else if ("2".equals(input)) {
-                System.out.println("Enter train number");
-                String trainnumber = scanner.nextLine();
-                JSON_pohja_junat.printTrainInfo(trainnumber);
+
+                listInfoOfCertainTrain();
+
             } else if ("3".equals(input)) {
                 findMovingTrainInfo();
             } else if ("0".equals(input)) {
                 System.out.println("Thank you! Have a nice day!");
                 break;
             } else {
-                System.err.println(String.format("Unknown choice, please type again: '%s'", input));
+                System.err.println(String.format("'" + input + "' is not a valid input. Please type again:"));
             }
         }
     }
 
+
+    //Tuomas
+
     Scanner scanner = new Scanner(System.in);
 
     private void returnTrainByGivenStations() {
-        //   JSON_pohja_junat.tulostaHyvaksyttavatAsemat();
+
 
         System.out.println("Enter departure station:");
         String departureStation = scanner.nextLine();
+        departureStation = CommonTools.fixInputOutlook(departureStation);
 
-        System.out.println("Enter arrival station");
+        System.out.println("Enter arrival station:");
         String arrivalStation = scanner.nextLine();
+        arrivalStation = CommonTools.fixInputOutlook(arrivalStation);
 
         JSON_pohja_junat.tulostaSeuraavaJunaLähtöJaMääräasemienPerusteella(departureStation, arrivalStation);
-        System.out.println("Now returning back to main menu");
-
+        System.out.println("Now returning back to main menu...");
     }
 
-    private void printTrainInfo() {
-        System.out.println("You are now searching information about a single train.");
-        System.out.println("Please enter train number");
 
-        String trainNumber = scanner.nextLine();
-
-        System.out.println("You entered train number " + trainNumber);
-        System.out.println("Tieto junan kulusta on...");
-        System.out.println("Tieto asemista, joilla juna pysähtyy...");
-        System.out.println("Tieto siitä, kuinka pitkä pysähdys on asemalla X...");
-        System.out.println("Now returning back to main menu");
+    //Sanna
+    private void listInfoOfCertainTrain() {
+        System.out.println("Enter train number");
+        String trainnumber = scanner.nextLine();
+        JSON_pohja_junat.ListInfoOfCertainTrain(trainnumber);
 
     }
 
     private void findMovingTrainInfo() {
         System.out.println("Choose an option:\n"
-                + "1: Choose stations\n"
+                + "1: Find all the trains between station A and station B\n"
                 + "2: Info based on your location\n"
-                + "3: Info based on one station\n"
+                + "3: Find all the trains departed from your station\n"
                 + "0: Return to main menu");
 
         String choice = scanner.nextLine();
-        if ("1".equals(choice)) {
+
+        //Rico
+        if ("1".equals(choice)){
+
             System.out.println("Find all the trains between station A and station B");
             System.out.print("Insert station A: ");
             String stationA = scanner.nextLine();
             stationA = CommonTools.fixInputOutlook(stationA);
+
             //System.out.println(stationA);
             //stationA = CommonTools.checkIfStringIsValidShortcodeOrStationNameAndChangeToShortCode(stationA);
             String stationB="";
@@ -94,6 +97,7 @@ public class UserInterface {
             }
             //System.out.println(stationB);
             //stationB = CommonTools.checkIfStringIsValidShortcodeOrStationNameAndChangeToShortCode(stationB);
+
             JSON_pohja_junat.activeTrainsBetweenTwoStations(stationA, stationB);
 
         } else if ("2".equals(choice)) {
@@ -102,13 +106,16 @@ public class UserInterface {
             String locationData = scanner.nextLine();
             System.out.println("Nearest trains and stations next to " + locationData + " are: ...");
 
-        } else if ("3".equals(choice)) {
-            System.out.println("Find all the trains departing from your station: ");
+
+        //Tuomas
+        } else if ("3".equals(choice)){
+            System.out.println("Find all the trains departed from your station:");
+
             String departureStation = scanner.nextLine();
-            JSON_pohja_junat.returnDepartedTrainsFromStation(departureStation);
+            JSON_pohja_junat.activeTrainsFromSingleStation(departureStation);
 
         } else if ("0".equals(choice)) {
-            System.out.println("Returning to main menu...");
+            System.out.println("Now returning back to main menu...");
         } else {
             System.err.println(String.format("Unknown choice, please type again: '%s'", choice));
         }

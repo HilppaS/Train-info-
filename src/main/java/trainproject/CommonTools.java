@@ -1,5 +1,6 @@
 package trainproject;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,5 +31,6 @@ public class CommonTools {
             System.out.println("Error occurred.");
         }
         return null;
+
     }
 }
