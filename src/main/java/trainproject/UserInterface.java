@@ -1,7 +1,10 @@
 package trainproject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
+
+import static trainproject.TrainStations.createListOfTrainStations;
 
 public class UserInterface {
     private static final String menutext = "\nChoose an option:\n"
@@ -12,6 +15,7 @@ public class UserInterface {
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
+       // HashMap trainStationHashMap = TrainStations.createListOfTrainStations();
         for (; ; ) {
             System.out.println(menutext);
             String input = scanner.nextLine();
@@ -75,9 +79,21 @@ public class UserInterface {
             System.out.print("Insert station A: ");
             String stationA = scanner.nextLine();
             stationA = CommonTools.fixInputOutlook(stationA);
-            System.out.print("Insert station B: ");
-            String stationB = scanner.nextLine();
-            stationB = CommonTools.fixInputOutlook(stationB);
+            //System.out.println(stationA);
+            //stationA = CommonTools.checkIfStringIsValidShortcodeOrStationNameAndChangeToShortCode(stationA);
+            String stationB="";
+            while(true) {
+                System.out.print("Insert station B: ");
+                stationB = scanner.nextLine();
+                stationB = CommonTools.fixInputOutlook(stationB);
+                if(!stationB.equals(stationA)){
+                    break;
+                } else {
+                    System.out.println("Departure and arrival stations cannot be same.");
+                }
+            }
+            //System.out.println(stationB);
+            //stationB = CommonTools.checkIfStringIsValidShortcodeOrStationNameAndChangeToShortCode(stationB);
             JSON_pohja_junat.activeTrainsBetweenTwoStations(stationA, stationB);
 
         } else if ("2".equals(choice)) {

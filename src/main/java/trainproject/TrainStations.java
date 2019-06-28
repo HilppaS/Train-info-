@@ -34,7 +34,7 @@ public class TrainStations {
         return stationShortCode;
     }
 
-    private static void createListOfTrainStations() {
+    public static HashMap createListOfTrainStations() {
         // Määritetään API:n osoite, mistä JSON-datat haetaan
         String baseurl = "https://rata.digitraffic.fi/api/v1";
         try {
@@ -50,18 +50,20 @@ public class TrainStations {
             //System.out.println(asemat.get(0).getStationName());
             //System.out.println("Asemat: " + asemat.get(0));
 
-            Map<String, Object> asemaTaulukko = new HashMap<String, Object>();
+            HashMap<String, Object> asemataulukko = new HashMap<String, Object>();
 
             for (TrainStations asema : asemat) {
-                asemaTaulukko.put(asema.getStationName(), asema.getStationShortCode());
+                asemataulukko.put(asema.getStationShortCode(), asema.getStationName());
             }
-
-            // Lyhenne on value (containsValue), kaupungin nimi on key (containsKey)
-            System.out.println(asemaTaulukko);
-            System.out.println(asemaTaulukko.containsKey("Nastola"));
-            System.out.println(asemaTaulukko.containsValue("HKI"));
+            //asemataulukko.put("HKI", "HELSINKI");
+            //asemataulukko.put("TKU", "TURKU");
+            return asemataulukko;
+            // System.out.println(asemaTaulukko);
+            //  System.out.println(asemaTaulukko.containsKey("Nastola"));
+            //  System.out.println(asemaTaulukko.containsValue("HKI"));
         } catch (Exception ex) {
             System.out.println(ex);
         }
+        return null;
     }
 }
