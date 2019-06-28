@@ -6,14 +6,11 @@ import static org.junit.Assert.*;
 public class JSON_pohja_junatTest {
 
     @Test
-    public void getInfoByTrainNrTest(){
-
+    public void ListInfoOfCertainTrain(){
+        // jos metodin parametrina annetussa arvossa on häikkää, metodi heittää poikkeuksen
+        //ListInfoOfCertainTrain(trainnumber);
     }
 
-    @Test
-    public void getStopStationsOfCertainTrainNrTest(){
-
-    }
 
     @Test
     public void shouldAnswerWithTrue() {

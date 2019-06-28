@@ -15,9 +15,13 @@ public class UserInterfaceTest {
 
     @Test
     public void userInputTest () {
-        String input = "5";
-        System.err.println(String.format("Unknown choice, please type again: '%s'", input));
+ //       String input = "?";
+ //       int put = Integer.parseInt(input);
+ //       if ( put <0 || put >3){
+ //           System.err.println(String.format("Unknown choice, please type again: '%s'", input));
+        }
+
     }
 
-}
+
 

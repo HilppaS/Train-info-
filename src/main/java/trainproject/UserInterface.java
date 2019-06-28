@@ -9,6 +9,7 @@ public class UserInterface {
             + "2: Get info of a specific train\n"
             + "3: Search trains that are on the move\n"
             + "0: Quit";
+
     public void run() {
         Scanner scanner = new Scanner(System.in);
         for (; ; ) {

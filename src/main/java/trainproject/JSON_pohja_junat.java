@@ -32,7 +32,7 @@ public class JSON_pohja_junat {
 
     public static void main(String[] args) {
         //kahdenAsemanValillaLiikkeessaOlevatJunat();
-        //  ListInfoOfCertainTrain("8");
+        //  ListInfoOfCertainTrain("");
     }
 
     public static void lueJunanJSONDataAsemaltaAasemalleB() {
@@ -59,11 +59,13 @@ public class JSON_pohja_junat {
             System.out.println("");
         }
     }
+
     //SANNA:
     // Metodi:
     // -listaa lähtö- sekä saapumisasemat, sekä kellonajat
     // Kutsuu metodia getInfoByTrainNr, joka hakee syötteen perusteella junan tiedot URLin takaa ja Mappaa ne
     // Kutsuu metodia getStopStationsOfCertainTrainNr, joka hakee URLin takaa asemat, joilla syötetty juna pysähtyy, niille arvioidut saapumisajat sekä pysähdysten kestot eri asemilla minuuteissa
+    // Jos asiakkaan syöte ei toimi, metodi heittää poikkeuksen...
 
     public static void ListInfoOfCertainTrain(String trainnumber) {
         // Määritetään API:n osoite, mistä JSON-datat haetaan
@@ -81,7 +83,11 @@ public class JSON_pohja_junat {
 
             System.out.println("Arrival station: " + kasiteltavajuna.get(kasiteltavajuna.size()-1).getStationShortCode()+ ", estimated arrival time: " + junanAika );
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Invalid input, please try again");
+        } catch (IndexOutOfBoundsException e){
+            System.out.println("Invalid input, please try again");
+        } catch (IllegalArgumentException e){
+            System.out.println("Invalid input, please try again");
         }
     }
     //SANNA:
