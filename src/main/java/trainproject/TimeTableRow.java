@@ -16,6 +16,7 @@ public class TimeTableRow {
     boolean cancelled;
     Date scheduledTime;
 
+
     @Override
     public String toString() {
         return "Aikataulu{" + "scheduledTime=" + scheduledTime + '}';
@@ -88,6 +89,7 @@ public class TimeTableRow {
     public Date getScheduledTime() {
         return scheduledTime;
     }
+
 
     public void setScheduledTime(Date scheduledTime) {
         this.scheduledTime = scheduledTime;
