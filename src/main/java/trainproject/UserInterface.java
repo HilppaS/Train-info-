@@ -9,6 +9,7 @@ public class UserInterface {
             + "2: Get info of a specific train\n"
             + "3: Search trains that are on the move\n"
             + "0: Quit";
+
     public void run() {
         Scanner scanner = new Scanner(System.in);
         for (; ; ) {
@@ -19,7 +20,7 @@ public class UserInterface {
             } else if ("2".equals(input)) {
                 System.out.println("Enter train number");
                 String trainnumber = scanner.nextLine();
-                JSON_pohja_junat.printTrainInfo(trainnumber);
+                JSON_pohja_junat.ListInfoOfCertainTrain(trainnumber);
             } else if ("3".equals(input)) {
                 findMovingTrainInfo();
             } else if ("0".equals(input)) {
@@ -32,7 +33,7 @@ public class UserInterface {
     }
     Scanner scanner = new Scanner(System.in);
     private void returnTrainByGivenStations() {
-     //   JSON_pohja_junat.tulostaHyvaksyttavatAsemat();
+        //   JSON_pohja_junat.tulostaHyvaksyttavatAsemat();
 
         System.out.println("Enter departure station:");
         String departureStation = scanner.nextLine();
