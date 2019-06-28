@@ -15,6 +15,7 @@ public class UserInterfaceTest {
 
     @Test
     public void userInputTest () {
+
  //       String input = "?";
  //       int put = Integer.parseInt(input);
  //       if ( put <0 || put >3){
@@ -22,6 +23,4 @@ public class UserInterfaceTest {
         }
 
     }
-
-
 

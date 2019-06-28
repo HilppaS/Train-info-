@@ -6,6 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.*;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -41,12 +47,11 @@ Asentuu Jacksonin databind, sekä core ja annotations
 
 public class JSON_pohja_junat {
 
-    public static void main(String[] args) {
 
-        //kahdenAsemanValillaLiikkeessaOlevatJunat();
-        //  ListInfoOfCertainTrain("");
+  /*  public static void main(String[] args) {
+        kahdenAsemanValillaLiikkeessaOlevatJunat("OL", "TKU");
+    }*/
 
-    }
 
     public static void lueJunanJSONDataAsemaltaAasemalleB() {
 
@@ -85,6 +90,7 @@ public class JSON_pohja_junat {
         // Määritetään API:n osoite, mistä JSON-datat haetaan
         String baseurl = "https://rata.digitraffic.fi/api/v1";
         try {
+
             List<Juna> junat = getInfoByTrainNr(trainnumber, baseurl);
             int i = 0;
 
@@ -127,6 +133,7 @@ public class JSON_pohja_junat {
         }
     }
 
+
     private static List<Juna> MapperMethod(URL url) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
@@ -147,19 +154,28 @@ public class JSON_pohja_junat {
     }
 
 
+
     //TUOMAKSEN KOODIA:
     // -> Metodi pyytää käyttäjää syöttämään haluamansa lähtö- ja pääteaseman.
     // -> Käyttäjän syötteet lisätään url-osoitteeseen, jonka jälkeen digitraffic.fi -sivulta haetaan seuraavat viisi junaa ja niiden lähtöajat
+
     public static void tulostaSeuraavaJunaLähtöJaMääräasemienPerusteella(String departureStation, String arrivalStation) {
         String baseurl = "https://rata.digitraffic.fi/api/v1";
 
         try {
-            URL url = new URL(URI.create(String.format("%s/live-trains/station/" + departureStation + "/" + arrivalStation + "?limit=5", baseurl)).toASCIIString());
+
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/" + departureStation + "/" + arrivalStation, baseurl)).toASCIIString());
+
             ObjectMapper mapper = new ObjectMapper();
             CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
             List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
 
-            System.out.println("Next suitable trains are:");
+
+            // for (Juna j : junat) {
+            System.out.println("Train " + junat.get(0).getTrainNumber() + " from " + departureStation + " to " + arrivalStation + " leaves at " + junat.get(0).getTimeTableRows().get(0).getScheduledTime());
+            //   i++;
+            // }
+
 
             for (Juna j : junat) {
                 System.out.println("Train " + j.getTrainNumber() + " from " + departureStation + " to " + arrivalStation + " leaves at " + j.getTimeTableRows().get(0).getScheduledTime());
@@ -211,6 +227,7 @@ public class JSON_pohja_junat {
                     }
                 }
             }
+
                         if (junienklm == 0) {
                             System.out.println("There does not seem to be any active trains that have left " + departureStation);
             }
@@ -278,32 +295,168 @@ public class JSON_pohja_junat {
         }
     }
 
+    public static void activeTrainsBetweenTwoStations(String departureStation, String arrivalStation) {
 
-    private static void kahdenAsemanValillaLiikkeessaOlevatJunat() {
         // Määritetään API:n osoite, mistä JSON-datat haetaan
         String baseurl = "https://rata.digitraffic.fi/api/v1";
         try {
+            HashMap trainStationHashMap = TrainStations.createListOfTrainStations();
+            String departureStationLong = trainStationHashMap.get(departureStation).toString();
+            String arrivalStationLong = trainStationHashMap.get(arrivalStation).toString();
             // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä Lahteen)
-            URL url = new URL(URI.create(String.format("%s/live-trains/station/HKI/TPE", baseurl)).toASCIIString());
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/" + departureStation + "/" + arrivalStation, baseurl)).toASCIIString());
             ObjectMapper mapper = new ObjectMapper();
             CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
             List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
-
+            int junienklm = 0;
             for (Juna j : junat) {
-                Date departure =j.getTimeTableRows().get(0).getScheduledTime();
-                Date arrival = j.getTimeTableRows().get(j.getTimeTableRows().size()-1).getScheduledTime();
-                System.out.println("lähtö" + departure);
-                System.out.println("arrival " + arrival);
-                System.out.println(new Date());
-                if(j.getTimeTableRows().get(0).getScheduledTime().after(new Date()) && j.getTimeTableRows().get(j.getTimeTableRows().size()-1).getScheduledTime().before(new Date())) {
-                    System.out.println("Junan numero on " + j.getTrainNumber());
-                    System.out.println("Junan lähtöpäivä on " + j.getDepartureDate());
-                    System.out.println("Juna on lähtenyt asemaltaan: " + j.getTimeTableRows().get(0).getScheduledTime());
+                List<TimeTableRow> aikataulu = j.getTimeTableRows();
+                boolean lahto = false;
+                boolean maaranpaa = false;
+                Date korjattulahtoaika = new Date();
+                Date korjattusaapumisaika = new Date();
+                Date korjatturivinaika = new Date();
+                for (TimeTableRow rivi : aikataulu) {
+                    korjatturivinaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                    if (departureStation.equals(rivi.getStationShortCode()) && rivi.isTrainStopping() && korjatturivinaika.before(new Date())) {
+                        lahto = true;
+                        korjattulahtoaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                    }
+                    if (arrivalStation.equals(rivi.getStationShortCode()) && rivi.isTrainStopping() && korjatturivinaika.after(new Date())) {
+                        maaranpaa = true;
+                        korjattusaapumisaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                    }
+                }
+                if (lahto && maaranpaa) {
+                    System.out.println("Train number " + j.getTrainNumber() + " has left " + departureStationLong + " on " + korjattulahtoaika + " and is on its way to " + arrivalStationLong + ". The train is scheduled to arrive on " + korjattusaapumisaika);
+                    junienklm++;
                 }
             }
-        } catch (Exception ex) {
-            System.out.println(ex);
+            if (junienklm == 0) {
+                System.out.println("There does not seem to be any trains currently traveling between " + departureStationLong + " and " + arrivalStationLong);
+            }
+        } catch (
+                JsonMappingException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        } catch (
+                MalformedURLException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        } catch (
+                IOException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        }catch (
+                NullPointerException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
         }
     }
+
+    public static void activeTrainsBetweenTwoStations(String departureStation, String arrivalStation) {
+        // Määritetään API:n osoite, mistä JSON-datat haetaan
+        String baseurl = "https://rata.digitraffic.fi/api/v1";
+        try {
+            HashMap trainStationHashMap = TrainStations.createListOfTrainStations();
+            String departureStationLong = trainStationHashMap.get(departureStation).toString();
+            String arrivalStationLong = trainStationHashMap.get(arrivalStation).toString();
+            // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä Lahteen)
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/" + departureStation + "/" + arrivalStation, baseurl)).toASCIIString());
+            ObjectMapper mapper = new ObjectMapper();
+            CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
+            List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
+            int junienklm = 0;
+            for (Juna j : junat) {
+                List<TimeTableRow> aikataulu = j.getTimeTableRows();
+                boolean lahto = false;
+                boolean maaranpaa = false;
+                Date korjattulahtoaika = new Date();
+                Date korjattusaapumisaika = new Date();
+                Date korjatturivinaika = new Date();
+                for (TimeTableRow rivi : aikataulu) {
+                    korjatturivinaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                    if (departureStation.equals(rivi.getStationShortCode()) && rivi.isTrainStopping() && korjatturivinaika.before(new Date())) {
+                        lahto = true;
+                        korjattulahtoaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                    }
+                    if (arrivalStation.equals(rivi.getStationShortCode()) && rivi.isTrainStopping() && korjatturivinaika.after(new Date())) {
+                        maaranpaa = true;
+                        korjattusaapumisaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                    }
+                }
+                if (lahto && maaranpaa) {
+                    System.out.println("Train number " + j.getTrainNumber() + " has left " + departureStationLong + " on " + korjattulahtoaika + " and is on its way to " + arrivalStationLong + ". The train is scheduled to arrive on " + korjattusaapumisaika);
+                    junienklm++;
+                }
+            }
+            if (junienklm == 0) {
+                System.out.println("There does not seem to be any trains currently traveling between " + departureStationLong + " and " + arrivalStationLong);
+            }
+        } catch (
+                JsonMappingException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        } catch (
+                MalformedURLException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        } catch (
+                IOException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        }catch (
+                NullPointerException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        }
+    }
+
+    public static void closestStation() {
+        // Määritetään API:n osoite, mistä JSON-datat haetaan
+        String baseurl = "https://rata.digitraffic.fi/api/v1";
+        try {
+            HashMap trainStationHashMap = TrainStations.createListOfTrainStations();
+            String departureStationLong = trainStationHashMap.get(departureStation).toString();
+            String arrivalStationLong = trainStationHashMap.get(arrivalStation).toString();
+            // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä Lahteen)
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/" + departureStation + "/" + arrivalStation, baseurl)).toASCIIString());
+            ObjectMapper mapper = new ObjectMapper();
+            CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
+            List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
+            int junienklm = 0;
+            for (Juna j : junat) {
+                List<TimeTableRow> aikataulu = j.getTimeTableRows();
+                boolean lahto = false;
+                boolean maaranpaa = false;
+                Date korjattulahtoaika = new Date();
+                Date korjattusaapumisaika = new Date();
+                Date korjatturivinaika = new Date();
+                for (TimeTableRow rivi : aikataulu) {
+                    korjatturivinaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                    if (departureStation.equals(rivi.getStationShortCode()) && rivi.isTrainStopping() && korjatturivinaika.before(new Date())) {
+                        lahto = true;
+                        korjattulahtoaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                    }
+                    if (arrivalStation.equals(rivi.getStationShortCode()) && rivi.isTrainStopping() && korjatturivinaika.after(new Date())) {
+                        maaranpaa = true;
+                        korjattusaapumisaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                    }
+                }
+                if (lahto && maaranpaa) {
+                    System.out.println("Train number " + j.getTrainNumber() + " has left " + departureStationLong + " on " + korjattulahtoaika + " and is on its way to " + arrivalStationLong + ". The train is scheduled to arrive on " + korjattusaapumisaika);
+                    junienklm++;
+                }
+            }
+            if (junienklm == 0) {
+                System.out.println("There does not seem to be any trains currently traveling between " + departureStationLong + " and " + arrivalStationLong);
+            }
+        } catch (
+                JsonMappingException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        } catch (
+                MalformedURLException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        } catch (
+                IOException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        }catch (
+                NullPointerException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        }
+    }
+
 }
 

@@ -1,7 +1,10 @@
 package trainproject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
+
+import static trainproject.TrainStations.createListOfTrainStations;
 
 public class UserInterface {
     private static final String menutext = "\nChoose an option:\n"
@@ -12,6 +15,7 @@ public class UserInterface {
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
+       // HashMap trainStationHashMap = TrainStations.createListOfTrainStations();
         for (; ; ) {
             System.out.println(menutext);
             String input = scanner.nextLine();
@@ -32,9 +36,13 @@ public class UserInterface {
         }
     }
 
+
     //Tuomas
+
     Scanner scanner = new Scanner(System.in);
+
     private void returnTrainByGivenStations() {
+
 
         System.out.println("Enter departure station:");
         String departureStation = scanner.nextLine();
@@ -65,26 +73,44 @@ public class UserInterface {
                 + "0: Return to main menu");
 
         String choice = scanner.nextLine();
+
         //Rico
         if ("1".equals(choice)){
+
             System.out.println("Find all the trains between station A and station B");
             System.out.print("Insert station A: ");
             String stationA = scanner.nextLine();
             stationA = CommonTools.fixInputOutlook(stationA);
-            System.out.print("Insert station B: ");
-            String stationB = scanner.nextLine();
-            stationB = CommonTools.fixInputOutlook(stationB);
+
+            //System.out.println(stationA);
+            //stationA = CommonTools.checkIfStringIsValidShortcodeOrStationNameAndChangeToShortCode(stationA);
+            String stationB="";
+            while(true) {
+                System.out.print("Insert station B: ");
+                stationB = scanner.nextLine();
+                stationB = CommonTools.fixInputOutlook(stationB);
+                if(!stationB.equals(stationA)){
+                    break;
+                } else {
+                    System.out.println("Departure and arrival stations cannot be same.");
+                }
+            }
+            //System.out.println(stationB);
+            //stationB = CommonTools.checkIfStringIsValidShortcodeOrStationNameAndChangeToShortCode(stationB);
+
             JSON_pohja_junat.activeTrainsBetweenTwoStations(stationA, stationB);
 
-        } else if ("2".equals(choice)){
+        } else if ("2".equals(choice)) {
             System.out.println("Find nearest trains based on your location");
             System.out.println("Enter your location:");
             String locationData = scanner.nextLine();
             System.out.println("Nearest trains and stations next to " + locationData + " are: ...");
 
+
         //Tuomas
         } else if ("3".equals(choice)){
             System.out.println("Find all the trains departed from your station:");
+
             String departureStation = scanner.nextLine();
             JSON_pohja_junat.activeTrainsFromSingleStation(departureStation);
 
@@ -94,6 +120,7 @@ public class UserInterface {
             System.err.println(String.format("Unknown choice, please type again: '%s'", choice));
         }
     }
+
     public static void main(String[] args) {
         new UserInterface().run();
     }
