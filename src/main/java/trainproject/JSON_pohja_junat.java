@@ -1,22 +1,33 @@
 package trainproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ConnectException;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+
 import java.time.LocalDateTime;
 import java.util.*;
+
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -31,8 +42,10 @@ Asentuu Jacksonin databind, sekä core ja annotations
 public class JSON_pohja_junat {
 
     public static void main(String[] args) {
+
         //kahdenAsemanValillaLiikkeessaOlevatJunat();
         //  ListInfoOfCertainTrain("");
+
     }
 
     public static void lueJunanJSONDataAsemaltaAasemalleB() {
@@ -55,6 +68,7 @@ public class JSON_pohja_junat {
             System.out.println("");
             //   i++;
             // }
+
         } catch (Exception e) {
             System.out.println("");
         }
@@ -73,6 +87,7 @@ public class JSON_pohja_junat {
         try {
             List<Juna> junat = getInfoByTrainNr(trainnumber, baseurl);
             int i = 0;
+
             List<TimeTableRow> kasiteltavajuna= junat.get(0).getTimeTableRows();
             Date junanAika = kasiteltavajuna.get(0).getScheduledTime();
 
@@ -100,6 +115,7 @@ public class JSON_pohja_junat {
             erotus = erotus/60000;
             if ( kasiteltavajuna.get(b).trainStopping){
                 System.out.println("Train stops: " + kasiteltavajuna.get(b).getStationShortCode()+ ", estimated arrival time: " + junanAika + ", stop length: " + erotus +" min");
+
             }
         }
     }
@@ -117,67 +133,151 @@ public class JSON_pohja_junat {
         return mapper.readValue(url, tarkempiListanTyyppi);
     }
 
+    private static List<Juna> getInfoByTrainNr(String trainnumber, String baseurl) throws IOException {
+        {
+            URL url = new URL(URI.create(String.format("%s/trains/latest/" + trainnumber, baseurl)).toASCIIString());
+            return MapperMethod(url);
+        }
+    }
 
+    private static List<Juna> MapperMethod(URL url) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
+        return mapper.readValue(url, tarkempiListanTyyppi);
+    }
+
+
+    //TUOMAKSEN KOODIA:
+    // -> Metodi pyytää käyttäjää syöttämään haluamansa lähtö- ja pääteaseman.
+    // -> Käyttäjän syötteet lisätään url-osoitteeseen, jonka jälkeen digitraffic.fi -sivulta haetaan seuraavat viisi junaa ja niiden lähtöajat
     public static void tulostaSeuraavaJunaLähtöJaMääräasemienPerusteella(String departureStation, String arrivalStation) {
         String baseurl = "https://rata.digitraffic.fi/api/v1";
 
         try {
-            URL url = new URL(URI.create(String.format("%s/live-trains/station/"+ departureStation + "/" +arrivalStation, baseurl)).toASCIIString());
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/" + departureStation + "/" + arrivalStation + "?limit=5", baseurl)).toASCIIString());
             ObjectMapper mapper = new ObjectMapper();
             CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
             List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
-            int i = 0;
 
-            // for (Juna j : junat) {
-            System.out.println("Train " +junat.get(0).getTrainNumber() + " from " + departureStation + " to " + arrivalStation + " leaves at " + junat.get(0).getTimeTableRows().get(0).getScheduledTime());
-            //   i++;
-            // }
+            System.out.println("Next suitable trains are:");
 
-        } catch (Exception ex) {
-            System.out.println(ex);
-        }
-    }
-
-    public static void returnDepartedTrainsFromStation(String departureStation) {
-        String baseurl = "https://rata.digitraffic.fi/api/v1";
-
-        try {
-            URL url = new URL(URI.create(String.format("%s/live-trains/station/" + departureStation, baseurl)).toASCIIString());
-            ObjectMapper mapper = new ObjectMapper();
-            CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
-            List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
-            int i = 0;
-
-            // for (Juna j : junat) {
-            if (junat.get(0).runningCurrently) {
-                System.out.println("The latest train departed from " + departureStation + " is: Train " + junat.get(0).getTrainNumber());
-                // Tähän lisättävä "junat.get(0).get.Timetablerows(0) stationShortCode" eli mille asemalle juna saapuu seuraavaksi + get.ScheduledTime
-            } else {
-                System.out.println("Train not running currently");
+            for (Juna j : junat) {
+                System.out.println("Train " + j.getTrainNumber() + " from " + departureStation + " to " + arrivalStation + " leaves at " + j.getTimeTableRows().get(0).getScheduledTime());
             }
-        } catch(Exception ex){
-            System.out.println(ex);
+        } catch (
+                JsonMappingException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        } catch (
+                MalformedURLException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+        } catch (
+                IOException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
         }
     }
 
-    public static void tulostaHyvaksyttavatAsemat() {
+    //TUOMAS (plagioiden)
+
+    public static void activeTrainsFromSingleStation(String departureStation) {
+        // Määritetään API:n osoite, mistä JSON-datat haetaan
         String baseurl = "https://rata.digitraffic.fi/api/v1";
         try {
-            URL url = new URL(URI.create(String.format("%s/live-trains/station/hki/LH", baseurl)).toASCIIString());
+            // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä)
+            URL url = new URL(URI.create(String.format("%s/live-trains/station/" + departureStation + "/" + "?arrived_trains=0&arriving_trains=0&departed_trains=50&departing_trains=50&include_nonstopping=false", baseurl)).toASCIIString());
+
             ObjectMapper mapper = new ObjectMapper();
             CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
             List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
-            int i = 0;
 
-            // for (Juna j : junat) {
-            System.out.println("Station codes are: " + junat.get(0).getTimeTableRows().get(0).getStationShortCode());
-            //   i++;
-            // }
+            int junienklm = 0;
+            for (Juna j : junat) {
+                List<TimeTableRow> aikataulu = j.getTimeTableRows();
+                boolean lahto = false;
+                boolean maaranpaa = false;
+                Date korjattulahtoaika = new Date();
+                Date korjattusaapumisaika = new Date();
+                Date junanlahtoaika = new Date();
+                Date korjatturivinaika;
+                boolean onkoJunaJoPrintattu = false;
+                junanlahtoaika = DateUtils.addHours(aikataulu.get(0).getScheduledTime(), -3);
+                if (junanlahtoaika.before(new Date())) {
+                    for (TimeTableRow rivi : aikataulu) {
+                        korjatturivinaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                        if (!onkoJunaJoPrintattu && korjatturivinaika.after(new Date())) {
+                            System.out.println("Train number " + j.getTrainNumber() + " has left " + departureStation + " on " + junanlahtoaika + " and is on its way to " + rivi.getStationShortCode() + ". The train is scheduled to arrive on " + korjatturivinaika);
+                            junienklm++;
+                            onkoJunaJoPrintattu=true;
+                        }
+                    }
+                }
+            }
+                        if (junienklm == 0) {
+                            System.out.println("There does not seem to be any active trains that have left " + departureStation);
+            }
+        } catch (
+                JsonMappingException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct active trains from " + departureStation);
+        } catch (
+                MalformedURLException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct active trains from " + departureStation);
+        } catch (
+                IOException ex) {
+            System.out.println("Our system only shows direct trains. It seems there are no direct active trains from " + departureStation);
 
-        } catch (Exception ex) {
-            System.out.println(ex);
         }
     }
+
+
+        //RICON KOODIA:
+        public static void activeTrainsBetweenTwoStations (String departureStation, String arrivalStation){
+            // Määritetään API:n osoite, mistä JSON-datat haetaan
+            String baseurl = "https://rata.digitraffic.fi/api/v1";
+            try {
+                // Määritetään url-parametriin haettava asia (esim. live-junat, Helsingistä Lahteen)
+                URL url = new URL(URI.create(String.format("%s/live-trains/station/" + departureStation + "/" + arrivalStation, baseurl)).toASCIIString());
+                ObjectMapper mapper = new ObjectMapper();
+                CollectionType tarkempiListanTyyppi = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Juna.class);
+                List<Juna> junat = mapper.readValue(url, tarkempiListanTyyppi);  // pelkkä List.class ei riitä tyypiksi
+                int junienklm = 0;
+                for (Juna j : junat) {
+                    List<TimeTableRow> aikataulu = j.getTimeTableRows();
+                    boolean lahto = false;
+                    boolean maaranpaa = false;
+                    Date korjattulahtoaika = new Date();
+                    Date korjattusaapumisaika = new Date();
+                    Date korjatturivinaika = new Date();
+                    for (TimeTableRow rivi : aikataulu) {
+                        korjatturivinaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                        if (departureStation.equals(rivi.getStationShortCode()) && rivi.isTrainStopping() && korjatturivinaika.before(new Date())) {
+                            lahto = true;
+                            korjattulahtoaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                        }
+                        if (arrivalStation.equals(rivi.getStationShortCode()) && rivi.isTrainStopping() && korjatturivinaika.after(new Date())) {
+                            maaranpaa = true;
+                            korjattusaapumisaika = DateUtils.addHours(rivi.getScheduledTime(), -3);
+                        }
+                    }
+                    if (lahto && maaranpaa) {
+                        System.out.println("Train number " + j.getTrainNumber() + " has left " + departureStation + " on " + korjattulahtoaika + " and is on its way to " + arrivalStation + ". The train is scheduled to arrive on " + korjattusaapumisaika);
+                        junienklm++;
+                    }
+                }
+                if (junienklm == 0) {
+                    System.out.println("There does not seem to be any trains currently traveling between " + departureStation + " and " + arrivalStation);
+                }
+            } catch (
+                    JsonMappingException ex) {
+                System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+            } catch (
+                    MalformedURLException ex) {
+                System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+            } catch (
+                    IOException ex) {
+                System.out.println("Our system only shows direct trains. It seems there are no direct trains traveling between " + departureStation + " and " + arrivalStation);
+            }
+        }
+    }
+
 
     private static void kahdenAsemanValillaLiikkeessaOlevatJunat() {
         // Määritetään API:n osoite, mistä JSON-datat haetaan
@@ -206,3 +306,4 @@ public class JSON_pohja_junat {
         }
     }
 }
+
